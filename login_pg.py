@@ -7,7 +7,7 @@ class main():
     def __init__(self, root):
         self.root = root
         self.root.title("GP2U Login")
-        self.root.geometry("750x450+770+200")
+        self.root.geometry("750x600+770+200")
 
         self.username = Label(root, text="Username")
         self.password = Label(root, text="Password")

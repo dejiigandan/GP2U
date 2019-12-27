@@ -6,7 +6,7 @@ class for_pt():
     def __init__(self, root):
         self.root = root
         self.root.title("Register")
-        self.root.geometry("750x450+770+200")
+        self.root.geometry("750x600+770+200")
 
         nhs_number = StringVar()
         Firstname = StringVar()
@@ -24,9 +24,9 @@ class for_pt():
         def add_pt():
             if len(nhs_number.get()) != 0:
                 pt_db_connectivity.new_patient(nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
-                Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get())
-                pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
-                Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get()))
+                Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get())
+                # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
+                # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
             user_name = username.get()
             pass_word = password.get()
             file = open("login_info.txt", "w")
