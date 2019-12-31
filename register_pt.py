@@ -1,6 +1,7 @@
 from tkinter import *
 import pt_db_connectivity
 import tkinter.messagebox
+from tkinter import ttk
 
 class for_pt():
     def __init__(self, root):
@@ -8,6 +9,7 @@ class for_pt():
         self.root.title("Register")
         self.root.geometry("750x600+770+200")
 
+        title = StringVar()
         nhs_number = StringVar()
         Firstname = StringVar()
         Surname = StringVar()
@@ -23,13 +25,13 @@ class for_pt():
 
         def add_pt():
             if len(nhs_number.get()) != 0:
-                pt_db_connectivity.new_patient(nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
+                pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
                 Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get())
                 # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
                 # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
             user_name = username.get()
             pass_word = password.get()
-            file = open("login_info.txt", "w")
+            file = open(f"{user_name}.txt", "w")
             file.write(user_name + "\n")
             file.write(pass_word + "\n")
             file.close()
@@ -66,30 +68,38 @@ class for_pt():
 
 #-------------------- FORM ENTRIES ------------------------------
 
+        self.title = Label(formframe, font=('calibri', 20, 'bold'), text="Title:", padx=2, pady=2)
+        self.title.grid(row=0, column=0, sticky=W)
+        self.droptitle = ttk.Combobox(formframe, textvariable=title, font=('calibri', 20, 'bold'), width=29)
+
+        self.droptitle['value'] = ('Select your title', 'Master', 'Miss', 'Mr', 'Mrs', 'Other')
+        self.droptitle.current(0)
+        self.droptitle.grid(row=0, column=1)
+
         self.labelnhs_number = Label(formframe, font=('calibri', 20, 'bold'), text="NHS number:", padx=2, pady=2)
-        self.labelnhs_number.grid(row=0, column=0, sticky=W)
+        self.labelnhs_number.grid(row=1, column=0, sticky=W)
         self.entrynhs_number = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=nhs_number, width=30)
-        self.entrynhs_number.grid(row=0, column=1)
+        self.entrynhs_number.grid(row=1, column=1)
 
         self.labelfirstname = Label(formframe, font=('calibri', 20, 'bold'), text="First name:", padx=2, pady=2)
-        self.labelfirstname.grid(row=1, column=0, sticky=W)
+        self.labelfirstname.grid(row=2, column=0, sticky=W)
         self.entryfirstname = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Firstname, width=30)
-        self.entryfirstname.grid(row=1, column=1)
+        self.entryfirstname.grid(row=2, column=1)
 
         self.labelsurname = Label(formframe, font=('calibri', 20, 'bold'), text="Surname:", padx=2, pady=2)
-        self.labelsurname.grid(row=2, column=0, sticky=W)
+        self.labelsurname.grid(row=3, column=0, sticky=W)
         self.entrysurname = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Surname, width=30)
-        self.entrysurname.grid(row=2, column=1)
-
-        self.labeldob = Label(formframe, font=('calibri', 20, 'bold'), text="Date of Birth:", padx=2, pady=2)
-        self.labeldob.grid(row=3, column=0, sticky=W)
-        self.entrydob = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=DOB, width=30)
-        self.entrydob.grid(row=3, column=1)
+        self.entrysurname.grid(row=3, column=1)
 
         self.labelgender = Label(formframe, font=('calibri', 20, 'bold'), text="Gender:", padx=2, pady=2)
         self.labelgender.grid(row=4, column=0, sticky=W)
-        self.entrygender = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Gender, width=30)
-        self.entrygender.grid(row=4, column=1)
+        self.dropgender = ttk.Combobox(formframe, textvariable=Gender, font=('calibri', 20, 'bold'), width=29)
+
+        self.dropgender['value'] = ('Select your gender', 'Male', 'Female', 'Non-binary', 'Other')
+        self.dropgender.current(0)
+        self.dropgender.grid(row=4, column=1)
+
+
 
         self.labeladdress = Label(formframe, font=('calibri', 20, 'bold'), text="Address:", padx=2, pady=2)
         self.labeladdress.grid(row=5, column=0, sticky=W)
@@ -101,15 +111,20 @@ class for_pt():
         self.entrycontact= Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Contact_number, width=30)
         self.entrycontact.grid(row=6, column=1)
 
+        self.labeldob = Label(formframe, font=('calibri', 20, 'bold'), text="Date of Birth:", padx=2, pady=2)
+        self.labeldob.grid(row=7, column=0, sticky=W)
+        self.entrydob = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=DOB, width=30)
+        self.entrydob.grid(row=7, column=1)
+
         self.labelallergies = Label(formframe, font=('calibri', 20, 'bold'), text="Allergies:", padx=2, pady=2)
-        self.labelallergies.grid(row=7, column=0, sticky=W)
+        self.labelallergies.grid(row=8, column=0, sticky=W)
         self.entryallergies = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Allergies, width=30)
-        self.entryallergies.grid(row=7, column=1)
+        self.entryallergies.grid(row=8, column=1)
 
         self.labelmedhis = Label(formframe, font=('calibri', 20, 'bold'), text="Medical history:", padx=2, pady=2)
-        self.labelmedhis.grid(row=8, column=0, sticky=W)
+        self.labelmedhis.grid(row=9, column=0, sticky=W)
         self.entrymedhis = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Medical_history, width=30)
-        self.entrymedhis.grid(row=8, column=1)
+        self.entrymedhis.grid(row=9, column=1)
 
         self.labelusername = Label(actionsframe, font=('calibri', 12, 'bold'), text="Select a username:", padx=2, pady=2)
         self.labelusername.grid(row=1, column=0, sticky=W)
@@ -118,7 +133,7 @@ class for_pt():
 
         self.labelpassword = Label(actionsframe, font=('calibri', 12, 'bold'), text="  Select a password:", padx=2, pady=2)
         self.labelpassword.grid(row=1, column=2, sticky=W)
-        self.entrypassword = Entry(actionsframe, font=('calibri', 12, 'bold'), textvariable=password, width=25)
+        self.entrypassword = Entry(actionsframe, font=('calibri', 12, 'bold'), textvariable=password, width=25, show="*")
         self.entrypassword.grid(row=1, column=3)
 
 
@@ -131,6 +146,9 @@ class for_pt():
         # self.up_details_btn = Button(actionsframe, text="Update details", font=('arial', 8, 'bold'), height=1, width=15)
         # self.up_details_btn.grid(row=9, column=2)
 
+#------------------ Add a new GP -----------------------
+
+# ------------------------------------------------------------------------------------------------------
 root = Tk()
 x = for_pt(root)
 

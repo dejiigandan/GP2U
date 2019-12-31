@@ -8,14 +8,14 @@ def ptDatabase():
     conn.commit()                                                                                       # commits the transaction
     conn.close()
 
-def new_patient(nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password):
+def new_patient(title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password):
     conn = sqlite3.connect("ptdatabase.db")
     cursor = conn.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS patient_details(nhs_number INTEGER PRIMARY KEY, Firstname TEXT, Surname TEXT, DOB TEXT, \
+    cursor.execute("""CREATE TABLE IF NOT EXISTS patient_details(title TEXT, nhs_number INTEGER PRIMARY KEY, Firstname TEXT, Surname TEXT, DOB TEXT, \
                     Gender TEXT, Address TEXT, Contact number TEXT, Allergies TEXT, Medical history TEXT, username TEXT, password TEXT)""")
     conn.commit()  # commits the transaction
-    cursor.execute("""INSERT INTO patient_details VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                   (nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password))
+    cursor.execute("""INSERT INTO patient_details VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password))
     conn.commit()
     conn.close()
 
@@ -34,19 +34,19 @@ def delete_patient(ptId):
     conn.commit()
     conn.close()
 
-def update_patient_details(ptId, nhs_number="", Firstname="", Surname="", DOB="", Gender="", Address="", Contact_number="", Allergies="", Medical_history="", username="", password=""):
+def update_patient_details(ptId, title="", nhs_number="", Firstname="", Surname="", DOB="", Gender="", Address="", Contact_number="", Allergies="", Medical_history="", username="", password=""):
     conn = sqlite3.connect("ptdatabase.db")
     cursor = conn.cursor()
-    cursor.execute("UPDATE pt_details SET nhs_number=?, Firstname=?, Surname=?, DOB=?, Gender=?, Address=?, Contact_number=?, Allergies=?, Medical_history=?, username=?, password=?, WHERE ptID=?", \
-                (nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password, ptId))
+    cursor.execute("UPDATE pt_details SET title=?, nhs_number=?, Firstname=?, Surname=?, DOB=?, Gender=?, Address=?, Contact_number=?, Allergies=?, Medical_history=?, username=?, password=?, WHERE ptID=?", \
+                (title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password, ptId))
     conn.commit()
     conn.close()
 
-def search_patient(nhs_number="", Firstname="", Surname="", DOB="", Gender="", Address="", Contact_number="", username=""):
+def search_patient(title="", nhs_number="", Firstname="", Surname="", DOB="", Gender="", Address="", Contact_number="", username=""):
     conn = sqlite3.connect("ptdatabase.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM patient_details WHERE nhs_number=? OR Firstname=?, Surname=? OR DOB=?, Gender=? OR Address=? OR Contact_number=? OR username=? ",\
-                (nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username))
+                (title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username))
     row = cursor.fetchall()
     conn.close()
     return row

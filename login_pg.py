@@ -1,5 +1,7 @@
 from tkinter import *
+import tkinter.messagebox
 import pt_db_connectivity
+from tkinter import ttk
 import os
 
 
@@ -9,26 +11,23 @@ class main():
         self.root.title("GP2U Login")
         self.root.geometry("750x600+770+200")
 
-        self.username = Label(root, text="Username")
-        self.password = Label(root, text="Password")
-        self.username.place(x=200, y=150)
-        self.password.place(x=200, y=180)
+        self.username = Label(self.root, text="Username")
+        self.password = Label(self.root, text="Password")
+        self.username.grid(row=8, column=4)
+        self.password.grid(row=9, column=4)
 
-        self.user_entry = Entry(root)
-        self.pass_entry = Entry(root)
-        self.user_entry.place(x=280, y=150)
-        self.pass_entry.place(x=280, y=180)
+        self.user_entry = Entry(self.root)
+        self.pass_entry = Entry(self.root, show="*")
+        self.user_entry.grid(row=8, column=5)
+        self.pass_entry.grid(row=9, column=5)
 
-        self.new_button = Button(root, text="Login", bg="lawn green", command=self.donothing)
-        self.new_button.bind("<Button-1>", self.login)
-        self.new_button.place(x=420, y=180)
+        self.new_button = Button(self.root, text="User Login", bg="lawn green")
+        self.new_button.bind("<Button-1>", self.login_verification)
+        self.new_button.grid(row=9, column=7, padx=4, pady=10)
 
-
-        # self.logoutbutton = Button(frame, text="Logout", command=self.logout)
-        # self.logoutbutton.pack(side=LEFT)
-
-        menu = Menu(root)
-        root.config(menu=menu)                                                  # we are configuring a menu for menu
+        self.admin_button = Button(self.root, text="Admin Login", bg="gray85")
+        self.admin_button.bind("<Button-1>", self.login_verification)
+        self.admin_button.grid(row=9, column=8, padx=4, pady=10)
 
 ##########################################################################################################
         #
@@ -44,26 +43,78 @@ class main():
         # menu.add_cascade(label="Manage patients", menu=self.managepts)
         # self.managepts.add_command(label="Search for a patient", command=self.listOfPatients)
 
-    def login(self, event):
-        checkuser = user_1.get()
-        checkpass = pass_1.get()
+    def login_verification(self, event):
+        global checkuser
+        checkuser = self.user_entry.get() + ".txt"
+        checkpass = self.pass_entry.get()
         my_files = os.listdir()
         if checkuser in my_files:
             open_user = open(checkuser, "r")
             open_pass = open_user.read().splitlines()
-            if checkpass in open_pass:
-                print("Login successful")
+            if (checkuser == "admin.txt") and (checkpass == "1234"):
+                self.upon_admin_Login()
+            elif checkuser == "admin.txt" and (checkpass != "1234"):
+                wrong_pass_mess = tkinter.messagebox.showinfo(message="Password does not match our records. Please try again.")
+                return wrong_pass_mess
+            elif checkpass in open_pass:
+                """ This section of the function logs user in """
+                #succ_login_mess = tkinter.messagebox.showinfo(message="Login Successful")
+                self.upon_login()
             else:
-                print("Incorrect password, please try again")
+                wrong_pass_mess = tkinter.messagebox.showinfo(message="Password does not match our records. Please try again.")
+                return wrong_pass_mess
         else:
-            print("Username not recognised. Please register")
+            unreg_mess = tkinter.messagebox.INFO(message="User account not found in our records. Please register")
+            return unreg_mess
 
-        print("Logged in")
+    def upon_login(self):
 
+        self.root = root
+        self.root.title(f"GP2U - {checkuser}")
+        self.root.geometry("750x450+770+200")
+
+        acc_wind = Toplevel(self.root)
+        frame2 = Frame(acc_wind)
+        frame2.pack(side=TOP)
+
+        button1 = Button(frame2, text="View bookings", fg="black", width=28)
+        button2 = Button(frame2, text="Book an appointment", fg="black", width=28)
+        button3 = Button(frame2, text="Cancel an appointment", fg="black", width=28)
+        button4 = Button(frame2, text="View Profile", fg="black", width=28)
+
+        button1.pack(side=LEFT)
+        button2.pack(side=LEFT)
+        button3.pack(side=LEFT)
+        button4.pack(side=LEFT)
+
+        menubar = Menu(self.root)                                               # creates a submenu within menu
+        self.root.config(menu=menubar)
+        my_menu = Menu(menubar)
+        submenu = Menu(my_menu)
+        submenu.add_cascade(label="Account", menu=menubar)
+        submenu.add_command(label="Profile", command=self.viewProfile)
+        submenu.add_command(label="Logout", command=self.logout)
+        submenu.add_command(label="Logout and close window", command=self.logout_and_close_window)
+
+    def upon_admin_Login(self):
+
+        acc_wind = Toplevel(self.root)
+        frame2 = Frame(acc_wind)
+        frame2.pack(side=TOP)
+
+        button4 = Button(frame2, text="Manage GP accounts", fg="black", width=28)
+        button4.bind("<Button-1>", register_a_gp.add_gp)
+        button5 = Button(frame2, text="Manage bookings", fg="black", width=28)
+        button6 = Button(frame2, text="Manage patient account", fg="black", width=28)
+
+        button4.pack(side=LEFT)
+        button5.pack(side=LEFT)
+        button6.pack(side=LEFT)
 
     def logout(self):
         print("You have been logged out")
-        Label(text="You have been logged out")
+        y = Label(text="You have been logged out")
+        y.pack()
 
     def logout_and_close_window(self):
         frame=Frame(root)
@@ -75,20 +126,14 @@ class main():
         print("View profile")
 
 
-    def tabs(self):
-        print("This is your tab")
-
-    def listOfPatients(self):
-        print("This is a list of your patients")
-
-
     def donothing(self):
         print("nothing's been done")
 
-
-
-
-
+class admin_login():
+    def __init__(self, root):
+        self.root = root
+        self.root.title("GP2U Login")
+        self.root.geometry("750x600+770+200")
 
 
 root = Tk()
@@ -103,33 +148,6 @@ a = main(root)
 
 
 
-
-# pagehead = Frame(root)
-# pagehead.pack()
-# pagebottom = Frame(root)
-# pagebottom.pack(side=BOTTOM)
-#
-# button1 = Button(pagehead, text="Patient Search", fg="black")
-# button2 = Button(pagehead, text="Bookings", fg="black")
-# button3 = Button(pagehead, text="Tab 3", fg="black")
-# button4 = Button(pagehead, text="Profile", fg="black")
-#
-# button1.pack(side=LEFT)
-# button2.pack(side=LEFT)
-# button3.pack(side=LEFT)
-# button4.pack(side=LEFT)
-
-# username = Label(root, text="Username")
-# password = Label(root, text="Password")
-#
-# entry_1 = Entry(root)
-# entry_2 = Entry(root)
-#
-# username.grid(row=5, sticky=E)
-# password.grid(row=6, sticky=W)
-#
-# entry_1.grid(row=5, column=1)
-# entry_2.grid(row=6, column=1)
 
 
 # new_button = Button(root, text= "Login",)
