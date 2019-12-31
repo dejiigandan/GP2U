@@ -13,9 +13,32 @@ def new_patient(title, nhs_number, Firstname, Surname, DOB, Gender, Address, Con
     cursor = conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS patient_details(title TEXT, nhs_number INTEGER PRIMARY KEY, Firstname TEXT, Surname TEXT, DOB TEXT, \
                     Gender TEXT, Address TEXT, Contact number TEXT, Allergies TEXT, Medical history TEXT, username TEXT, password TEXT)""")
-    conn.commit()  # commits the transaction
+    conn.commit()
     cursor.execute("""INSERT INTO patient_details VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                    (title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password))
+    conn.commit()
+    conn.close()
+
+def confirm_pt_registration(title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password):
+    conn = sqlite3.connect("ptdatabase.db")
+    cursor = conn.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS confirmed_patients(title TEXT, nhs_number INTEGER PRIMARY KEY, Firstname TEXT, Surname TEXT, DOB TEXT, \
+                    Gender TEXT, Address TEXT, Contact number TEXT, Allergies TEXT, Medical history TEXT, username TEXT, password TEXT)""")
+    conn.commit()
+    cursor.execute("""INSERT INTO confirmed_patients VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password))
+    conn.commit()
+    conn.close()
+
+
+def confirm_gp():
+    conn = sqlite3.connect("ptdatabase.db")
+    cursor = conn.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS list_of_gps(title TEXT, Firstname TEXT, Surname TEXT,  Gender TEXT,  \
+                    Address TEXT, Contact number TEXT, DOB TEXT, username INTEGER PRIMARY KEY TEXT, password TEXT)""")
+    conn.commit()
+    cursor.execute("""INSERT INTO list_of_gps VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (title, Firstname, Surname,  Gender, Address, Contact_number, DOB, username, password))
     conn.commit()
     conn.close()
 

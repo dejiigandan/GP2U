@@ -37,7 +37,7 @@ class for_pt():
             file.close()
             # entryusername.delete(0, END)
             # entrypassword.delete(0, END)
-            confirm_box = tkinter.messagebox.showinfo(message="Registration successful")
+            confirm_box = tkinter.messagebox.showinfo(message="Your details have been forwarded to our administration team who will confirm your registration")
             return confirm_box
 
 
