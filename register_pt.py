@@ -26,7 +26,7 @@ class for_pt():
         def add_pt():
             if len(nhs_number.get()) != 0:
                 pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
-                Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get())
+                Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get().title(), password.get())
                 # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
                 # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
             user_name = username.get()
@@ -35,8 +35,6 @@ class for_pt():
             file.write(user_name + "\n")
             file.write(pass_word + "\n")
             file.close()
-            # entryusername.delete(0, END)
-            # entrypassword.delete(0, END)
             confirm_box = tkinter.messagebox.showinfo(message="Your details have been forwarded to our administration team who will confirm your registration")
             return confirm_box
 
