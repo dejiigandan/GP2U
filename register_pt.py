@@ -25,8 +25,8 @@ class for_pt():
 
         def add_pt():
             if len(nhs_number.get()) != 0:
-                pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
-                Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get().title(), password.get())
+                pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(),  Gender.get(),
+                Address.get(), Contact_number.get(), DOB.get(), Allergies.get(), Medical_history.get(), username.get().title(), password.get())
                 # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
                 # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
             user_name = username.get()
