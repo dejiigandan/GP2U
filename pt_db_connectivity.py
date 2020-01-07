@@ -99,3 +99,5 @@ def delete_availability(id):
     cursor.execute("DELETE FROM availabilities WHERE date_available='%s'" %id)
     conn.commit()
     conn.close()
+
+def book_apptmt(ptname, ptnhsno, )

@@ -5,7 +5,6 @@ from tkinter import ttk
 import os
 import sqlite3
 
-
 class main():
     def __init__(self, root):
         self.root = root
@@ -36,6 +35,7 @@ class main():
         self.register_button = Button(self.root, text="Click here", bg="gray85")
         self.register_button.bind("<Button-1>")
         self.register_button.grid(row=10, column=4, padx=4, pady=10)
+
 
 
 ##########################################################################################################
@@ -133,6 +133,9 @@ class main():
     def donothing(self):
         print("nothing's been done")
 
+    #TODO Add regiser button and register class to login page
+    #todo add logout button to each page
+
 class admin_login():
     def __init__(self, root):
         self.root = root
@@ -150,6 +153,7 @@ class admin_login():
 
         rightframe = Frame(frame2, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
         rightframe.pack(side=LEFT)
+
 
 #-------------------------------  some functions-----------------------------------
 
@@ -176,8 +180,13 @@ class admin_login():
             pt_db_connectivity.update_patient_details(pttitle.get(), right_nhs.get(), ptFirstname.get(), ptSurname.get(), ptGender.get(), ptAddress.get(),
                     ptContact_number.get(), ptDOB.get(), ptAllergies.get(), ptMedical_history.get(), right_user.get().title(), ptpassword.get())
 
+        def admin_fill_list():
+            avail_box.delete(0, END)
+            for row in pt_db_connectivity.list_avail():
+                avail_box.insert(END, row)
 
-#----------------------- GP DETAILS---------------------------------
+
+        #----------------------- GP DETAILS---------------------------------
         Title = StringVar()
         self.Title = Title
 
@@ -253,10 +262,14 @@ class admin_login():
 
 #------------------------ TEXT BOX SHOWING AVAILABILITIES ---------------------------------------------------
 
-        avail_box = tkinter.Text(middleframe, font=('calibri', 12), height=13, width=40, padx=10, pady=30, relief=GROOVE)
+        avail_box = Listbox(middleframe, height=25, width=55)
         avail_box.grid(row=1, column=1)
+        admin_fill_list()
+
+
         notebox = Label(middleframe, text="Doctors' Availabilities", font=('calibri', 12, 'bold'))
         notebox.grid(row=2, column=1)
+
 #-----------------------------------PATIENT SEARCH BOX -------------------------------------------------------------
 
         global searchboxentry
@@ -337,7 +350,6 @@ class admin_login():
                                relief=RAISED, command=uppt)
         update_pt_btn.grid(row=14, column=1, sticky=E)
 
-
 #-----------------------------------GP HANDLING-------------------------------------------------------------
 
         title = Label(leftframe, font=('calibri', 16, 'bold'), text="Title:", padx=2, pady=2)
@@ -411,8 +423,6 @@ class admin_login():
         searchtext = Label(leftframe, font=('calibri', 12), text="Search GP username:", padx=2, pady=2)
         searchtext.grid(row=13, column=0, sticky=W)
 #----------------------------------------------------------------------------------------------------------------------
-    def donothing(self):
-        print("nothing's been done")
 
     def search_user(self):
         try:
@@ -462,7 +472,6 @@ class admin_login():
             tkinter.messagebox.showinfo(title="No user error", message="User account not found in our records")
 
 
-
 class GPPage:
     def __init__(self, root):
         self.root = root
@@ -483,23 +492,23 @@ class GPPage:
 
         # -----------------------------FUNCTIONS-------------------------------------------------
         def fill_list():
-            avail_box.delete(0, END)
+            availabilities_box.delete(0, END)
             for row in pt_db_connectivity.list_avail():
-                avail_box.insert(END, row)
+                availabilities_box.insert(END, row)
 
         def add_myavails():
             if (len(apdate_entry.get()) != 0) and (len(apttime_entry.get()) != 0) and (len (name_show_entry.get()) != 0):
                 pt_db_connectivity.add_new_availability(apdate_entry.get(), apttime_entry.get(), name_show_entry.get())
-                avail_box.delete(0, END)
-                avail_box.insert(END, (apdate_entry.get(), apttime_entry.get(), name_show_entry.get()))
+                availabilitiesa_box.delete(0, END)
+                availabilities_box.insert(END, (apdate_entry.get(), apttime_entry.get(), name_show_entry.get()))
                 fill_list()
             else:
                 tkinter.messagebox.showinfo(title="Error", message="Please ensure all fields are complete")
 
         def selectitem(command):
             global selected
-            item = avail_box.curselection()
-            selected = avail_box.get(item)
+            item = availabilities_box.curselection()
+            selected = availabilities_box.get(item)
 
         def del_avail():
             pt_db_connectivity.delete_availability(selected[0])
@@ -543,16 +552,16 @@ class GPPage:
         delete_btn.grid(row=3, column=0, sticky=E)
 
 # ---------------------availabilities listbox------------------------------------------------
-        global avail_box
-        avail_box = Listbox(leftframe, height=25, width=55)
-        avail_box.grid(row=4, column=0)
+        global availabilities_box
+        availabilities_box = Listbox(leftframe, height=25, width=55)
+        availabilities_box.grid(row=4, column=0)
 
         scrollbar = Scrollbar(leftframe)
         scrollbar.grid(row=4, column=1)
-        avail_box.config(yscrollcommand=scrollbar.set)
-        scrollbar.config(command=avail_box)
+        availabilities_box.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=availabilities_box)
 
-        avail_box.bind('<<ListboxSelect>>', selectitem)
+        availabilities_box.bind('<<ListboxSelect>>', selectitem)
 
         fill_list()
 #---------------------------------------- RIGHT FRAME------------------------------------------------------------------
@@ -617,15 +626,12 @@ class GPPage:
 
 #----------------------------------------   MIDDLE FRAME   ----------------------------------------------------------------
 
-        middlebox = LabelFrame(middleframe, bd)
-
         middlebox = LabelFrame(middleframe, bd=1, width=400, height=500, relief=GROOVE, font=('calibri', 18, 'bold'), text="Appointment requests", padx=2, pady=2)
         middlebox.pack(side=TOP)
 
         global request_box
         request_box = Listbox(middlebox, height=25, width=55)
         request_box.grid(row=0, column=0)
-
 
 
 
