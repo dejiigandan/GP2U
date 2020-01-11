@@ -42,7 +42,7 @@ def confirm_pt_registration(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB
     conn.commit()
     cursor.execute("INSERT INTO confirmed_patients VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                    (pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress, ptContact_number,
-                    ptAllergies, ptMedical_history, ptusername, ptpassword))
+                    ptAllergies, ptMedical_history, ptusername.title(), ptpassword))
     conn.commit()
     conn.close()
 
@@ -53,13 +53,24 @@ def confirm_pt_registration(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB
 #     conn.commit()
 #     conn.close()
 
+# def update_patient_details(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress,
+#                             ptContact_number, ptAllergies, ptMedical_history, ptusername, ptpassword):
+#     conn = sqlite3.connect("ptdatabase.db")
+#     cursor = conn.cursor()
+#     cursor.execute("INSERT INTO confirmed_patients VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+#                    (pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress, ptContact_number,
+#                     ptAllergies, ptMedical_history, ptusername, ptpassword))
+#     conn.commit()
+#     conn.close()
+
 def update_patient_details(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress,
-                            ptContact_number, ptAllergies, ptMedical_history, ptusername, ptpassword):
+                            ptContact_number, ptAllergies, ptMedical_history, ptusername, ptpassword, another):
     conn = sqlite3.connect("ptdatabase.db")
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO confirmed_patients VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                   (pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress, ptContact_number,
-                    ptAllergies, ptMedical_history, ptusername, ptpassword))
+    cursor.execute(""" UPDATE confirmed_patients SET title=(?), nhs_number=(?), Firstname=(?), Surname=(?), DOB=(?), Gender=(?), Address=(?), Contact_number=(?),
+                    Allergies=(?), Medical_history=(?), username=(?), password=(?) WHERE nhs_number=(?) """,
+                   (pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress,
+                    ptContact_number, ptAllergies, ptMedical_history, ptusername, ptpassword, another))
     conn.commit()
     conn.close()
 
@@ -82,8 +93,6 @@ def list_avail():
     conn.close()
     return rows
 
-
-
 def add_new_availability(newdate, newtime, docname):
     conn = sqlite3.connect("appointments.db")
     cursor = conn.cursor()
@@ -93,11 +102,48 @@ def add_new_availability(newdate, newtime, docname):
     conn.commit()
     conn.close()
 
-def delete_availability(id):
+def delete_availability(x, y, z):
     conn = sqlite3.connect("appointments.db")
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM availabilities WHERE date_available='%s'" %id)
+    cursor.execute("DELETE FROM availabilities WHERE date_available='%s' AND time_available='%s'AND doc='%s'" %(x, y, z))
     conn.commit()
     conn.close()
 
-def book_apptmt(ptname, ptnhsno, )
+def list_of_requests():
+    conn = sqlite3.connect("appointments.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM appointment_requests")
+    rows = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return rows
+
+def confirm_appointment(a, b, c, d):
+    conn=sqlite3.connect("appointments.db")
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS confirmed_appointments(NHS_NUMBER TEXT, apptmtdate TEXT, apptmttime TEXT, apptmtdoc TEXT)")
+    conn.commit()
+    cursor.execute("INSERT INTO confirmed_appointments VALUES (?, ?, ?, ?)", (a, b, c, d))
+    conn.commit()
+    conn.close()
+#
+#----------------------------- TO BOOK APPOINTMENTS ------------------------------------------
+
+def request_apptmt(ptnhsno, lastname, adate, atime):
+    conn = sqlite3.connect("appointments.db")
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS appointment_requests(NHS_NUMBER TEXT, lastname TEXT, apptmtdate TEXT, apptmttime TEXT)")
+    conn.commit()
+    cursor.execute("INSERT INTO appointment_requests VALUES (?, ?, ?, ?)", (ptnhsno, lastname, adate, atime))
+    conn.commit()
+    conn.close()
+
+def list_mypt_bookings(nhsno):
+    conn = sqlite3.connect("appointments.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM confirmed_appointments WHERE NHS_NUMBER='%s'" %nhsno)
+    rows = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return rows
+

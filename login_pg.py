@@ -18,6 +18,7 @@ class main():
 
         self.user_entry = Entry(self.root)
         self.pass_entry = Entry(self.root, show="*")
+
         self.user_entry.grid(row=8, column=5)
         self.pass_entry.grid(row=9, column=5)
 
@@ -32,12 +33,13 @@ class main():
         self.register_here = Label(self.root, text=" to register if unregistered")
         self.register_here.grid(row=10, column=5)
 
-        self.register_button = Button(self.root, text="Click here", bg="gray85")
+        self.register_button = Button(self.root, text="Click here", bg="gray85", command=self.taketoregister)
         self.register_button.bind("<Button-1>")
         self.register_button.grid(row=10, column=4, padx=4, pady=10)
 
 
-
+    def taketoregister(self):
+        return for_pt(root)
 ##########################################################################################################
         #
         # self.account = Menu(menu)                                               # creates a submenu within menu
@@ -65,12 +67,12 @@ class main():
             elif checkuser == "admin.txt" and (checkpass != "1234"):
                 wrong_pass_mess = tkinter.messagebox.showinfo(message="Password does not match our records. Please try again.")
                 return wrong_pass_mess
-            elif (checkuser + ".gp") == (self.user_entry.get().lower() + ".txt.gp") and (checkpass in open_pass):
-                GPPage(root)
+            # elif (checkuser + ".gp") == (self.user_entry.get().lower() + ".txt.gp") and (checkpass in open_pass):
+            #     GPPage(root)
             elif checkpass in open_pass:
                 """ This section of the function logs user in """
                 #succ_login_mess = tkinter.messagebox.showinfo(message="Login Successful")
-                self.upon_login()
+                PatientPage(root)
             else:
                 wrong_pass_mess = tkinter.messagebox.showinfo(message="Password does not match our records. Please try again.")
                 return wrong_pass_mess
@@ -86,8 +88,8 @@ class main():
             unreg_mess = tkinter.messagebox.INFO(message="User account not found in our records. Please register")
             return unreg_mess
 
-    def upon_login(self):
 
+    def upon_login(self):
         self.root = root
         self.root.title(f"GP2U - {checkuser}")
         self.root.geometry("750x450+770+200")
@@ -126,18 +128,152 @@ class main():
         frame.quit()
         print("You have been logged out")
 
-    def viewProfile(self):
-        print("View profile")
-
-
     def donothing(self):
         print("nothing's been done")
 
     #TODO Add regiser button and register class to login page
     #todo add logout button to each page
 
-class admin_login():
+
+class for_pt():
     def __init__(self, root):
+        self.root = root
+        self.root.title("Register")
+        self.root.geometry("750x600+770+200")
+        frame = Toplevel(self.root)
+        frame.grid()
+
+        title = StringVar()
+        nhs_number = StringVar()
+        Firstname = StringVar()
+        Surname = StringVar()
+        DOB = StringVar()
+        Gender = StringVar()
+        Address = StringVar()
+        Contact_number = StringVar()
+        Allergies = StringVar()
+        Medical_history = StringVar()
+
+        username = StringVar()
+        password = StringVar()
+
+        def add_pt():
+            if len(nhs_number.get()) != 0:
+                pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(),  Gender.get(),
+                Address.get(), Contact_number.get(), DOB.get(), Allergies.get(), Medical_history.get(), username.get().title(), password.get())
+                # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
+                # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
+            user_name = username.get()
+            pass_word = password.get()
+            file = open(f"{user_name}.txt", "w")
+            file.write(user_name + "\n")
+            file.write(pass_word + "\n")
+            file.close()
+            confirm_box = tkinter.messagebox.showinfo(message="Your details have been forwarded to our administration team who will confirm your registration")
+            return confirm_box
+            #TODO add message box to show message if selected NHS number is not unique
+
+        # def show_pt():
+        #     pt_list.delete(0, END)
+        #     for i in pt_db_connectivity.pull_info():
+        #         st_list.insert(END, i, str(""))
+
+        pagetitle = Frame(frame)
+        pagetitle.pack(side=TOP)
+
+        lbltit = Label(pagetitle, font=('calibri', 28, 'bold'), text="Registration page")
+        lbltit.grid()
+
+        formframe = Frame(frame, bd=1, height=700, padx=15, pady=25, relief=RIDGE)
+        formframe.pack(side=TOP)
+
+        actionsframe = Frame(frame, width=500, height=40, padx=8, pady=6, relief=RIDGE)
+        actionsframe.pack(side=TOP)
+
+#-------------------- FORM ENTRIES ------------------------------
+
+        title = Label(formframe, font=('calibri', 20, 'bold'), text="Title:", padx=2, pady=2)
+        title.grid(row=0, column=0, sticky=W)
+        droptitle = ttk.Combobox(formframe, textvariable=title, font=('calibri', 20, 'bold'), width=29)
+
+        droptitle['value'] = ('Select your title', 'Master', 'Miss', 'Mr', 'Mrs', 'Other')
+        droptitle.current(0)
+        droptitle.grid(row=0, column=1)
+
+        labelnhs_number = Label(formframe, font=('calibri', 20, 'bold'), text="NHS number:", padx=2, pady=2)
+        labelnhs_number.grid(row=1, column=0, sticky=W)
+        entrynhs_number = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=nhs_number, width=30)
+        entrynhs_number.grid(row=1, column=1)
+
+        labelfirstname = Label(formframe, font=('calibri', 20, 'bold'), text="First name:", padx=2, pady=2)
+        labelfirstname.grid(row=2, column=0, sticky=W)
+        entryfirstname = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Firstname, width=30)
+        entryfirstname.grid(row=2, column=1)
+
+        labelsurname = Label(formframe, font=('calibri', 20, 'bold'), text="Surname:", padx=2, pady=2)
+        labelsurname.grid(row=3, column=0, sticky=W)
+        entrysurname = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Surname, width=30)
+        entrysurname.grid(row=3, column=1)
+
+        labelgender = Label(formframe, font=('calibri', 20, 'bold'), text="Gender:", padx=2, pady=2)
+        labelgender.grid(row=4, column=0, sticky=W)
+        dropgender = ttk.Combobox(formframe, textvariable=Gender, font=('calibri', 20, 'bold'), width=29)
+
+        dropgender['value'] = ('Select your gender', 'Male', 'Female', 'Non-binary', 'Other')
+        dropgender.current(0)
+        dropgender.grid(row=4, column=1)
+
+
+
+        labeladdress = Label(formframe, font=('calibri', 20, 'bold'), text="Address:", padx=2, pady=2)
+        labeladdress.grid(row=5, column=0, sticky=W)
+        entryaddress = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Address, width=30)
+        entryaddress.grid(row=5, column=1)
+
+        labelcontact = Label(formframe, font=('calibri', 20, 'bold'), text="Contact number:", padx=2, pady=2)
+        labelcontact.grid(row=6, column=0, sticky=W)
+        entrycontact= Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Contact_number, width=30)
+        entrycontact.grid(row=6, column=1)
+
+        labeldob = Label(formframe, font=('calibri', 20, 'bold'), text="Date of Birth:", padx=2, pady=2)
+        labeldob.grid(row=7, column=0, sticky=W)
+        entrydob = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=DOB, width=30)
+        entrydob.grid(row=7, column=1)
+
+        labelallergies = Label(formframe, font=('calibri', 20, 'bold'), text="Allergies:", padx=2, pady=2)
+        labelallergies.grid(row=8, column=0, sticky=W)
+        entryallergies = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Allergies, width=30)
+        entryallergies.grid(row=8, column=1)
+
+        labelmedhis = Label(formframe, font=('calibri', 20, 'bold'), text="Medical history:", padx=2, pady=2)
+        labelmedhis.grid(row=9, column=0, sticky=W)
+        entrymedhis = Entry(formframe, font=('calibri', 20, 'bold'), textvariable=Medical_history, width=30)
+        entrymedhis.grid(row=9, column=1)
+
+        labelusername = Label(actionsframe, font=('calibri', 12, 'bold'), text="Select a username:", padx=2, pady=2)
+        labelusername.grid(row=1, column=0, sticky=W)
+        entryusername = Entry(actionsframe, font=('calibri', 12, 'bold'), textvariable=username, width=25)
+        entryusername.grid(row=1, column=1)
+
+        labelpassword = Label(actionsframe, font=('calibri', 12, 'bold'), text="  Select a password:", padx=2, pady=2)
+        labelpassword.grid(row=1, column=2, sticky=W)
+        entrypassword = Entry(actionsframe, font=('calibri', 12, 'bold'), textvariable=password, width=25, show="*")
+        entrypassword.grid(row=1, column=3)
+
+
+
+# ----------------  Actions to form -----------------------------
+
+        add_details_btn = Button(actionsframe, text="Confirm registration", font=('arial', 12, 'bold'), height=1, width=18, relief=RAISED, command=add_pt)
+        add_details_btn.grid(row=1, column=4)
+
+        # self.up_details_btn = Button(actionsframe, text="Update details", font=('arial', 8, 'bold'), height=1, width=15)
+        # self.up_details_btn.grid(row=9, column=2)
+
+
+class admin_login(main):
+    def __init__(self, root):
+        super().__init__(root)
         self.root = root
         self.root.title("Admin")
         self.root.geometry("750x600+770+200")
@@ -145,14 +281,21 @@ class admin_login():
         frame2 = Toplevel(self.root)
         frame2.grid()
 
-        leftframe = Frame(frame2, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        adminnotebook = ttk.Notebook(frame2)
+        adminnotebook.pack()
+
+        leftframe = ttk.Frame(adminnotebook)
         leftframe.pack(side=LEFT)
 
-        middleframe = Frame(frame2, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        middleframe = ttk.Frame(adminnotebook)
         middleframe.pack(side=LEFT)
 
-        rightframe = Frame(frame2, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
+        rightframe = ttk.Frame(adminnotebook)
         rightframe.pack(side=LEFT)
+
+        adminnotebook.add(leftframe, text="Add new GP")
+        adminnotebook.add(middleframe, text="View available appointments")
+        adminnotebook.add(rightframe, text="Manage patients")
 
 
 #-------------------------------  some functions-----------------------------------
@@ -178,7 +321,8 @@ class admin_login():
 
         def uppt():
             pt_db_connectivity.update_patient_details(pttitle.get(), right_nhs.get(), ptFirstname.get(), ptSurname.get(), ptGender.get(), ptAddress.get(),
-                    ptContact_number.get(), ptDOB.get(), ptAllergies.get(), ptMedical_history.get(), right_user.get().title(), ptpassword.get())
+            ptContact_number.get(), ptDOB.get(), ptAllergies.get(), ptMedical_history.get(), right_user.get().title(), ptpassword.get(), right_nhs.get())
+            tkinter.messagebox.showinfo(title="update", message="User details updated")
 
         def admin_fill_list():
             avail_box.delete(0, END)
@@ -472,23 +616,40 @@ class admin_login():
             tkinter.messagebox.showinfo(title="No user error", message="User account not found in our records")
 
 
-class GPPage:
+class GPPage(main):
     def __init__(self, root):
+        super().__init__(root)
         self.root = root
-        self.root.title("GP")
+        self.root.title(f"GP - {self.user_entry}")
         self.root.geometry("750x600+770+200")
 
         frame3 = Toplevel(self.root)
         frame3.grid()
 
-        leftframe = Frame(frame3, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        # leftframe = Frame(frame3, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        # leftframe.pack(side=LEFT)
+        #
+        # middleframe = Frame(frame3, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        # middleframe.pack(side=LEFT)
+        #
+        # rightframe = Frame(frame3, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
+        # rightframe.pack(side=LEFT)
+
+        notebook = ttk.Notebook(frame3)
+        notebook.pack()
+
+        leftframe = ttk.Frame(notebook)
         leftframe.pack(side=LEFT)
 
-        middleframe = Frame(frame3, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        middleframe = ttk.Frame(notebook)
         middleframe.pack(side=LEFT)
 
-        rightframe = Frame(frame3, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
+        rightframe = ttk.Frame(notebook)
         rightframe.pack(side=LEFT)
+
+        notebook.add(leftframe, text="Manage availabilities")
+        notebook.add(middleframe, text="Requests")
+        notebook.add(rightframe, text="Prescriptions")
 
         # -----------------------------FUNCTIONS-------------------------------------------------
         def fill_list():
@@ -496,24 +657,44 @@ class GPPage:
             for row in pt_db_connectivity.list_avail():
                 availabilities_box.insert(END, row)
 
+        def fillrequestbox():
+            requestsbox.delete(0, END)
+            for i in pt_db_connectivity.list_of_requests():
+                requestsbox.insert(END, i)
+
         def add_myavails():
             if (len(apdate_entry.get()) != 0) and (len(apttime_entry.get()) != 0) and (len (name_show_entry.get()) != 0):
                 pt_db_connectivity.add_new_availability(apdate_entry.get(), apttime_entry.get(), name_show_entry.get())
-                availabilitiesa_box.delete(0, END)
+                availabilities_box.delete(0, END)
                 availabilities_box.insert(END, (apdate_entry.get(), apttime_entry.get(), name_show_entry.get()))
                 fill_list()
             else:
                 tkinter.messagebox.showinfo(title="Error", message="Please ensure all fields are complete")
 
         def selectitem(command):
-            global selected
-            item = availabilities_box.curselection()
-            selected = availabilities_box.get(item)
+            try:
+                global selected
+                datesel = availabilities_box.curselection()[0]
+                selected = availabilities_box.get(datesel)
+            except IndexError:
+                pass
 
         def del_avail():
-            pt_db_connectivity.delete_availability(selected[0])
+            pt_db_connectivity.delete_availability(selected[0], selected[1], selected[2])
             fill_list()
 
+        def selectrequest(anothercommand):
+            try:
+                global myselect
+                itemselected = requestsbox.curselection()[0]
+                myselect = requestsbox.get(itemselected)
+            except IndexError:
+                pass
+
+        def confirm_appointment():
+            pt_db_connectivity.confirm_appointment(myselect[0], myselect[1], myselect[2], myselect[3])
+            tkinter.messagebox.showinfo(title="Confirmed", message="Appointment confirmed")
+            fillrequestbox()
 
 #----------------- Entry boxes in leftframre--------------------------
 
@@ -551,7 +732,7 @@ class GPPage:
         delete_btn = Button(leftframe, text="Delete availability", font=('calibri', 12), height=1, width=16, relief=RAISED, command=del_avail)
         delete_btn.grid(row=3, column=0, sticky=E)
 
-# ---------------------availabilities listbox------------------------------------------------
+# ---------------------availabilities and requests listboxes------------------------------------------------
         global availabilities_box
         availabilities_box = Listbox(leftframe, height=25, width=55)
         availabilities_box.grid(row=4, column=0)
@@ -564,6 +745,24 @@ class GPPage:
         availabilities_box.bind('<<ListboxSelect>>', selectitem)
 
         fill_list()
+
+# ------------------------------------MIDDLE FRAME----------------------------------------------------------------
+
+        middlebox = LabelFrame(middleframe, bd=1, width=400, height=500, relief=GROOVE, font=('calibri', 18, 'bold'), text="Appointment requests", padx=2, pady=2)
+        middlebox.grid()
+
+        global requestsbox
+        requestsbox = Listbox(middleframe, height=27, width=60)
+        requestsbox.grid(row=0, column=0)
+
+        confirm_button = Button(middleframe, text="Confirm appointment", font=('calibri', 12), height=1, width=18, relief=RAISED, command=confirm_appointment)
+        confirm_button.grid(row=1, column=0, sticky=W)
+
+        requestsbox.bind('<<ListboxSelect>>', selectrequest)
+
+
+        fillrequestbox()
+
 #---------------------------------------- RIGHT FRAME------------------------------------------------------------------
 
         presbox = LabelFrame(rightframe, bd=1, width=400, height=300, relief=RIDGE, font=('calibri', 18, 'bold'), text="Create a prescription", padx=2, pady=2)
@@ -624,14 +823,194 @@ class GPPage:
         # placedobage = Label(scriptbox, text=entrydobage.get())
         # placedobage.place(x=150, y=10)
 
-#----------------------------------------   MIDDLE FRAME   ----------------------------------------------------------------
 
-        middlebox = LabelFrame(middleframe, bd=1, width=400, height=500, relief=GROOVE, font=('calibri', 18, 'bold'), text="Appointment requests", padx=2, pady=2)
-        middlebox.pack(side=TOP)
+class PatientPage(main):
+    def __init__(self, root):
+        super().__init__(root)
+        self.root = root
+        self.root.title(f"Patient - {self.user_entry}")
+        self.root.geometry("750x700+780+160")
+        frame4 = Toplevel(self.root)
+        frame4.grid()
 
-        global request_box
-        request_box = Listbox(middlebox, height=25, width=55)
-        request_box.grid(row=0, column=0)
+        def sendrequest():
+            if (len(entryptnhsno.get()) != 0) and (len(entryptsurname.get()) != 0) and (
+                    len(entryptdate.get()) != 0) and (len(entrypttime.get()) != 0):
+                pt_db_connectivity.request_apptmt(entryptnhsno.get(), entryptsurname.get(), entryptdate.get(),
+                                                  entrypttime.get())
+                tkinter.messagebox.showinfo(title="Request sent", message="Request sent")
+
+            else:
+                tkinter.messagebox.showinfo(title="Error", message="Please fill all fields")
+
+
+        # ---------------------------------  NOTEBOOK ---------------------------------
+
+        ptnotebook = ttk.Notebook(frame4)
+        ptnotebook.pack()
+
+        ptleftframe = ttk.Frame(ptnotebook)
+        ptleftframe.pack(side=LEFT)
+
+        ptmiddleframe = ttk.Frame(ptnotebook)
+        ptmiddleframe.pack(side=LEFT)
+
+        ptrightframe = ttk.Frame(ptnotebook)
+        ptrightframe.pack(side=LEFT)
+
+        ptnotebook.add(ptleftframe, text="Appointment availabilities")
+        ptnotebook.add(ptmiddleframe, text="Book an appointment")
+        ptnotebook.add(ptrightframe, text="Cancel an appointment")
+
+        # --------------------------------- LEFT FRAME   -----------------------------------------------
+
+        def pt_fill_list():
+            """This lists the available appointments in the leftmost tab"""
+            ptavail_box.delete(0, END)
+            for row in pt_db_connectivity.list_avail():
+                ptavail_box.insert(END, row)
+
+        def cursorselect(event):
+            try:
+                global selectedTimeslot
+                timeslot = ptavail_box.curselection()[0]
+                selectedTimeslot = ptavail_box.get(timeslot)
+
+                entryptdate.delete(0, END)
+                entryptdate.insert(END, selectedTimeslot[
+                    0])  # fills the entry boxes in the middle tab with the chosen timeslot and time
+                entrypttime.delete(0, END)
+                entrypttime.insert(END, selectedTimeslot[1])
+            except IndexError:
+                pass
+
+        # def fill_pt_bookings():
+        #     ptbookings_box.delete(0, END)
+        #     for i in pt_db_connectivity.list_mypt_bookings(ptnhsno.get()):
+        #         ptbookings_box.insert(END, i)
+        #         print(i)
+
+
+        global ptavail_box
+        ptavail_box = Listbox(ptleftframe, height=25, width=55, font=('calibri', 13, 'bold'))
+        ptavail_box.grid(row=0, column=0)
+
+        pt_fill_list()
+
+        ptavail_box.bind('<<ListboxSelect>>', cursorselect)
+
+
+
+        ##--------------------------------- MIDDLE FRAME ------------------------------------------------
+
+        pt_nhs_no = StringVar()
+        self.pt_nhs_no = pt_nhs_no
+
+        ptSurname = StringVar()
+        self.ptSurname = ptSurname
+
+        ptappdate = StringVar()
+        self.ptappdate = ptappdate
+
+        ptapptime = StringVar()
+        self.ptapptime = ptapptime
+
+        searchbytext = Label(ptmiddleframe, text="Enter NHS number:", font=('calibri', 12), padx=2, pady=2)
+        searchbytext.grid(row=0, column=0, sticky=W)
+
+        global pt_searchby_nhsentry
+        pt_searchby_nhsentry = Entry(ptmiddleframe, font=('calibri', 12, 'bold'), width=22)
+        pt_searchby_nhsentry.grid(row=0, column=1, sticky=W)
+
+        ptsearch_btn = Button(ptmiddleframe, text="Search", font=('calibri', 12), height=1, width=8, relief=RAISED,
+                              command=self.ptsearch_user)
+        ptsearch_btn.grid(row=0, column=1, sticky=E)
+
+        labelptnhsno = Label(ptmiddleframe, font=('calibri', 16, 'bold'), text="NHS No:", padx=2, pady=2)
+        labelptnhsno.grid(row=1, column=0, sticky=W)
+        entryptnhsno = Entry(ptmiddleframe, font=('calibri', 16, 'bold'), textvariable=self.pt_nhs_no, width=25)
+        entryptnhsno.grid(row=1, column=1)
+
+        labelptsurname = Label(ptmiddleframe, font=('calibri', 16, 'bold'), text="Surname:", padx=2, pady=2)
+        labelptsurname.grid(row=2, column=0, sticky=W)
+        entryptsurname = Entry(ptmiddleframe, font=('calibri', 16, 'bold'), textvariable=self.ptSurname, width=25)
+        entryptsurname.grid(row=2, column=1)
+
+        labelptdate = Label(ptmiddleframe, font=('calibri', 16, 'bold'), text="Enter date:", padx=2, pady=2)
+        labelptdate.grid(row=3, column=0, sticky=W)
+        entryptdate = Entry(ptmiddleframe, font=('calibri', 16, 'bold'), textvariable=self.ptappdate, width=25)
+        entryptdate.grid(row=3, column=1)
+
+        labelpttime = Label(ptmiddleframe, font=('calibri', 16, 'bold'), text="Enter time:", padx=2, pady=2)
+        labelpttime.grid(row=4, column=0, sticky=W)
+        entrypttime = Entry(ptmiddleframe, font=('calibri', 16, 'bold'), textvariable=self.ptapptime, width=25)
+        entrypttime.grid(row=4, column=1)
+
+        request_aptmt_btn = Button(ptmiddleframe, text="Request appointment", font=('calibri', 12), height=1, width=20,
+                                   relief=RAISED, command=sendrequest)
+        request_aptmt_btn.grid(row=5, column=1, sticky=E)
+
+        # --------------------------------------------- RIGHT FRAME-------------------------------------------------------
+
+        this_user_nhsno = StringVar()
+        self.this_user_nhsno = this_user_nhsno
+
+        newone = StringVar()
+        self.newone = newone
+
+        global ptbookings_box
+        ptbookings_box = Listbox(ptrightframe, height=25, width=45, font=('calibri', 13, 'bold'))
+        ptbookings_box.grid(row=3, column=0)
+
+        #fill_pt_bookings()
+
+        rightframetit = Label(ptrightframe, font=('calibri', 16, 'bold'), text="Confirmed appointments", padx=2, pady=2)
+        rightframetit.grid(row=0, column=0)
+
+        rightsearchtext = Label(ptrightframe, font=('calibri', 16, 'bold'), text="Enter NHS no:", padx=2, pady=2)
+        rightsearchtext.grid(row=1, column=0, sticky=W)
+
+        global ptenternhs
+        ptenternhs = Entry(ptrightframe, font=('calibri', 16, 'bold'), textvariable=self.this_user_nhsno, width=16)
+        ptenternhs.grid(row=1, column=0, sticky=E)
+
+        ptsearch_btn2 = Button(ptrightframe, text="Search", font=('calibri', 12), height=1, width=8, relief=RAISED,
+                              command=self.search_usertwo)
+        ptsearch_btn2.grid(row=2, column=0, sticky=E)
+
+        # -------------------------------------------SOME FUNCTIONS------------------------------------------------------
+
+    def ptsearch_user(self):
+        try:
+            conn = sqlite3.connect("ptdatabase.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM confirmed_patients WHERE nhs_number='%s'" % pt_searchby_nhsentry.get().title())
+            conn.commit()
+            row = cursor.fetchone()
+            self.pt_nhs_no.set(row[1])
+            self.ptSurname.set(row[2])
+            conn.commit()
+            conn.close()
+        except:
+            tkinter.messagebox.showinfo(title="No user error", message="User account not found in our records")
+
+
+    def search_usertwo(self):
+        conn = sqlite3.connect("ptdatabase.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM confirmed_patients WHERE username='%s'" %ptenternhs.get())
+        conn.commit()
+        #row = cursor.fetchone()
+        #print(row)
+        #self.newone.set(row[1])
+        conn.commit()
+        conn.close()
+
+        ptbookings_box.delete(0, END)
+        for i in pt_db_connectivity.list_mypt_bookings(ptenternhs.get()):
+            ptbookings_box.insert(END, i)
+            print(i)
+
 
 
 

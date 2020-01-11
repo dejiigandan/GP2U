@@ -12,15 +12,34 @@ class GPPage:
         #frame3 = Toplevel(self.root)
         #frame3.grid()
 
-        leftframe = Frame(self.root, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        # leftframe = Frame(self.root, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        # leftframe.pack(side=LEFT)
+        #
+        # middleframe = Frame(self.root, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        # middleframe.pack(side=LEFT)
+        #
+        # rightframe = Frame(self.root, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
+        # rightframe.pack(side=LEFT)
+################################# NOTEBOOK######################################################
+
+        notebook = ttk.Notebook(root)
+        notebook.pack()
+
+        leftframe = ttk.Frame(notebook)
         leftframe.pack(side=LEFT)
 
-        middleframe = Frame(self.root, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
+        middleframe = ttk.Frame(notebook)
         middleframe.pack(side=LEFT)
 
-        rightframe = Frame(self.root, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
+        rightframe = ttk.Frame(notebook)
         rightframe.pack(side=LEFT)
 
+        notebook.add(leftframe, text="Manage availabilities")
+        notebook.add(middleframe, text="Bookings")
+        notebook.add(rightframe, text="Prescriptions")
+
+
+################################################################################################
         # -----------------------------FUNCTIONS-------------------------------------------------
         def fill_list():
             avail_box.delete(0, END)
@@ -37,12 +56,16 @@ class GPPage:
                 tkinter.messagebox.showinfo(title="Error", message="Please ensure all fields are complete")
 
         def selectitem(command):
-            global selected
-            item = avail_box.curselection()
-            selected = avail_box.get(item)
+            try:
+                global selected
+                datesel = avail_box.curselection()[0]
+                selected = avail_box.get(datesel)
+            except IndexError:
+                pass
+
 
         def del_avail():
-            pt_db_connectivity.delete_availability(selected[0])
+            pt_db_connectivity.delete_availability(selected[0], selected[1], selected[2])
             fill_list()
 
 
@@ -163,11 +186,6 @@ class GPPage:
         global request_box
         request_box = Listbox(middlebox, height=25, width=55)
         request_box.grid(row=0, column=0)
-
-
-
-    def donothing(self):
-        print("nothing's been done")
 
 
 

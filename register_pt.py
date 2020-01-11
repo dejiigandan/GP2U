@@ -37,17 +37,13 @@ class for_pt():
             file.close()
             confirm_box = tkinter.messagebox.showinfo(message="Your details have been forwarded to our administration team who will confirm your registration")
             return confirm_box
-
+            #TODO add message box to show message if selected NHS number is not unique
 
         def show_pt():
             pt_list.delete(0, END)
             for i in pt_db_connectivity.pull_info():
                 st_list.insert(END, i, str(""))
 
-
-        # def update_details():
-        #     if len((nhs_number.get()) != 0):
-        #         pt_db_connectivity.update_patient_details(sd[0])
 
         frame = Frame(self.root)
         frame.pack()

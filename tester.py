@@ -1,9 +1,9 @@
 import sqlite3
 
 
-conn = sqlite3.connect("appointments.db")
+conn = sqlite3.connect("ptdatabase.db")
 cursor = conn.cursor()
-cursor.execute("""DROP table availabilities""")
+cursor.execute("SELECT * FROM confirmed_patients ")
 #cursor.execute("""DROP table gp_table""")
 print(cursor.fetchall())
 conn.commit()
