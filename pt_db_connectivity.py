@@ -147,3 +147,11 @@ def list_mypt_bookings(nhsno):
     conn.close()
     return rows
 
+def del_apptmt(mynhs, mydate, mytime):
+    conn = sqlite3.connect("appointments.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM confirmed_appointments WHERE NHS_NUMBER='%s'AND apptmtdate='%s'AND apptmttime='%s'" %(mynhs, mydate, mytime))
+    conn.commit()
+    conn.close()
+
+

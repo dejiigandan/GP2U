@@ -1,11 +1,14 @@
 from tkinter import *
 import tkinter.messagebox
+from tkinter import Menu
 import pt_db_connectivity
 from tkinter import ttk
 import os
 import sqlite3
+import smtplib
 
 class main():
+    """The main page. Patient/Admin/GP can navigate the software from this page"""
     def __init__(self, root):
         self.root = root
         self.root.title("GP2U Login")
@@ -26,10 +29,6 @@ class main():
         self.new_button.bind("<Button-1>")
         self.new_button.grid(row=9, column=7, padx=4, pady=10)
 
-        # self.admin_button = Button(self.root, text="Admin Login", bg="gray85", command=self.login_verification)
-        # self.admin_button.bind("<Button-1>")
-        # self.admin_button.grid(row=9, column=8, padx=4, pady=10)
-
         self.register_here = Label(self.root, text=" to register if unregistered")
         self.register_here.grid(row=10, column=5)
 
@@ -41,18 +40,11 @@ class main():
     def taketoregister(self):
         return for_pt(root)
 ##########################################################################################################
-        #
         # self.account = Menu(menu)                                               # creates a submenu within menu
         # menu.add_cascade(label="Account", menu=self.account)
-        # self.account.add_command(label="Profile", command=self.viewProfile)
         # self.account.add_command(label="Logout", command=self.logout)
-        # self.account.add_command(label="Logout and close window", command=self.logout_and_close_window)
-        #
-        # # self.account.add_separator()
-        #
-        # self.managepts = Menu(menu)
-        # menu.add_cascade(label="Manage patients", menu=self.managepts)
-        # self.managepts.add_command(label="Search for a patient", command=self.listOfPatients)
+        # self.account.add_command(label="Logout and exit", command=self.logout_and_close_window)
+
 
     def login_verification(self):
         global checkuser
@@ -71,7 +63,7 @@ class main():
             #     GPPage(root)
             elif checkpass in open_pass:
                 """ This section of the function logs user in """
-                #succ_login_mess = tkinter.messagebox.showinfo(message="Login Successful")
+                succ_login_mess = tkinter.messagebox.showinfo(message="Login Successful")
                 PatientPage(root)
             else:
                 wrong_pass_mess = tkinter.messagebox.showinfo(message="Password does not match our records. Please try again.")
@@ -91,7 +83,7 @@ class main():
 
     def upon_login(self):
         self.root = root
-        self.root.title(f"GP2U - {checkuser}")
+        self.root.title(f"GP2U")
         self.root.geometry("750x450+770+200")
 
         acc_wind = Toplevel(self.root)
@@ -136,6 +128,7 @@ class main():
 
 
 class for_pt():
+    """This allows the user to register"""
     def __init__(self, root):
         self.root = root
         self.root.title("Register")
@@ -161,8 +154,6 @@ class for_pt():
             if len(nhs_number.get()) != 0:
                 pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(),  Gender.get(),
                 Address.get(), Contact_number.get(), DOB.get(), Allergies.get(), Medical_history.get(), username.get().title(), password.get())
-                # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
-                # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
             user_name = username.get()
             pass_word = password.get()
             file = open(f"{user_name}.txt", "w")
@@ -172,11 +163,6 @@ class for_pt():
             confirm_box = tkinter.messagebox.showinfo(message="Your details have been forwarded to our administration team who will confirm your registration")
             return confirm_box
             #TODO add message box to show message if selected NHS number is not unique
-
-        # def show_pt():
-        #     pt_list.delete(0, END)
-        #     for i in pt_db_connectivity.pull_info():
-        #         st_list.insert(END, i, str(""))
 
         pagetitle = Frame(frame)
         pagetitle.pack(side=TOP)
@@ -267,17 +253,16 @@ class for_pt():
         add_details_btn = Button(actionsframe, text="Confirm registration", font=('arial', 12, 'bold'), height=1, width=18, relief=RAISED, command=add_pt)
         add_details_btn.grid(row=1, column=4)
 
-        # self.up_details_btn = Button(actionsframe, text="Update details", font=('arial', 8, 'bold'), height=1, width=15)
-        # self.up_details_btn.grid(row=9, column=2)
-
 
 class admin_login(main):
+    """Admin staff are taken here and can add new GP, delete GP or confirm patient registration"""
     def __init__(self, root):
         super().__init__(root)
         self.root = root
         self.root.title("Admin")
         self.root.geometry("750x600+770+200")
 
+        global frame2
         frame2 = Toplevel(self.root)
         frame2.grid()
 
@@ -297,6 +282,11 @@ class admin_login(main):
         adminnotebook.add(middleframe, text="View available appointments")
         adminnotebook.add(rightframe, text="Manage patients")
 
+        menubar = Menu(frame2)
+        frame2.config(menu=menubar)
+        mymenu = Menu(menubar, tearoff=0)
+        mymenu.add_command(label="Logout", command=self.quitframe2)
+        menubar.add_cascade(label="Account", menu=mymenu)
 
 #-------------------------------  some functions-----------------------------------
 
@@ -304,7 +294,26 @@ class admin_login(main):
             pt_db_connectivity.confirm_pt_registration(pttitle.get(), right_nhs.get(), ptFirstname.get(), ptSurname.get(), ptGender.get(), ptAddress.get(),
             ptContact_number.get(), ptDOB.get(), ptAllergies.get(), ptMedical_history.get(), right_user.get().title(), ptpassword.get())
 
+            def send_email(subject, content):
+                """Sends a confirmation email to the newly registered patient"""
+                try:
+                    server = smtplib.SMTP('smtp.gmail.com:587')
+                    server.ehlo()
+                    server.starttls()
+                    server.login("gp2ulondon@gmail.com", "gooddoctor")
+                    message = f'Subject: {subject}\n\n{content}'
+                    server.sendmail("gp2ulondon@gmail.com", ptContact_number.get(), message)
+                    server.quit()
+                    print("Works")
+                except:
+                    print("fail")
+
+            subject = "test subject"
+            content = "how are you today"
+            send_email(subject, content)
+
         def reggp():
+            """Function to register a GP"""
             if len(entryusername.get()) != 0:
                 pt_db_connectivity.new_gp(droptitle.get(),
                         entryfirstname.get(), entrysurname.get(), dropgender.get(), entryaddress.get(), entrycontact.get(), entrydob.get(),
@@ -616,24 +625,26 @@ class admin_login(main):
             tkinter.messagebox.showinfo(title="No user error", message="User account not found in our records")
 
 
+    def quitframe2(self):
+        _1exit = tkinter.messagebox.askyesno(title="Logout?", message="Do you wish to logout")
+        if _1exit > 0:
+            frame2.destroy()
+        else:
+            pass
+
+
+
 class GPPage(main):
+    """The GP Page allows GP to manage patients as well as manage appointments/availabilities"""
     def __init__(self, root):
         super().__init__(root)
         self.root = root
-        self.root.title(f"GP - {self.user_entry}")
+        self.root.title(f"GP")
         self.root.geometry("750x600+770+200")
 
+        global frame3
         frame3 = Toplevel(self.root)
         frame3.grid()
-
-        # leftframe = Frame(frame3, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
-        # leftframe.pack(side=LEFT)
-        #
-        # middleframe = Frame(frame3, bd=2, width=420, height=400, padx=50, pady=10, relief=GROOVE)
-        # middleframe.pack(side=LEFT)
-        #
-        # rightframe = Frame(frame3, bd=2, width=420, height=400, padx=20, pady=10, relief=GROOVE)
-        # rightframe.pack(side=LEFT)
 
         notebook = ttk.Notebook(frame3)
         notebook.pack()
@@ -650,6 +661,12 @@ class GPPage(main):
         notebook.add(leftframe, text="Manage availabilities")
         notebook.add(middleframe, text="Requests")
         notebook.add(rightframe, text="Prescriptions")
+
+        menubar = Menu(frame3)
+        frame3.config(menu=menubar)
+        mymenu = Menu(menubar, tearoff=0)
+        mymenu.add_command(label="Logout", command=self.quitframe3)
+        menubar.add_cascade(label="Account", menu=mymenu)
 
         # -----------------------------FUNCTIONS-------------------------------------------------
         def fill_list():
@@ -817,19 +834,23 @@ class GPPage(main):
         scriptbox = LabelFrame(rightframe, bd=1, width=400, height=300, relief=RIDGE, font=('calibri', 18, 'bold'), text="Sample prescription", padx=2, pady=2)
         scriptbox.pack(side=BOTTOM)
 
-        # placetittle = Label(scriptbox, text=entryrighttitle.get())
-        # placetittle.place(x=250, y=10)
-        #
-        # placedobage = Label(scriptbox, text=entrydobage.get())
-        # placedobage.place(x=150, y=10)
+    def quitframe3(self):
+        _exit = tkinter.messagebox.askyesno(title="Logout?", message="Do you wish to logout")
+        if _exit > 0:
+            frame3.destroy()
+        else:
+            pass
+
 
 
 class PatientPage(main):
     def __init__(self, root):
         super().__init__(root)
         self.root = root
-        self.root.title(f"Patient - {self.user_entry}")
+        self.root.title(f"Patient")
         self.root.geometry("750x700+780+160")
+
+        global frame4
         frame4 = Toplevel(self.root)
         frame4.grid()
 
@@ -842,6 +863,19 @@ class PatientPage(main):
 
             else:
                 tkinter.messagebox.showinfo(title="Error", message="Please fill all fields")
+
+        def selecter(mycommand):
+            try:
+                global myselection
+                selectappmt = ptbookings_box.curselection()[0]
+                myselection = ptbookings_box.get(selectappmt)
+            except IndexError:
+                pass
+
+        def delete_appointment_pt():
+            pt_db_connectivity.del_apptmt(myselection[0], myselection[1], myselection[2])
+            fill_pt_bookings()
+
 
 
         # ---------------------------------  NOTEBOOK ---------------------------------
@@ -861,6 +895,12 @@ class PatientPage(main):
         ptnotebook.add(ptleftframe, text="Appointment availabilities")
         ptnotebook.add(ptmiddleframe, text="Book an appointment")
         ptnotebook.add(ptrightframe, text="Cancel an appointment")
+
+        menubar = Menu(frame4)
+        frame4.config(menu=menubar)
+        mymenu = Menu(menubar, tearoff=0)
+        mymenu.add_command(label="Logout", command=self.quitframe4)
+        menubar.add_cascade(label="Account", menu=mymenu)
 
         # --------------------------------- LEFT FRAME   -----------------------------------------------
 
@@ -884,12 +924,10 @@ class PatientPage(main):
             except IndexError:
                 pass
 
-        # def fill_pt_bookings():
-        #     ptbookings_box.delete(0, END)
-        #     for i in pt_db_connectivity.list_mypt_bookings(ptnhsno.get()):
-        #         ptbookings_box.insert(END, i)
-        #         print(i)
-
+        def fill_pt_bookings():
+            ptbookings_box.delete(0, END)
+            for i in pt_db_connectivity.list_mypt_bookings(ptenternhs.get()):
+                ptbookings_box.insert(END, i)
 
         global ptavail_box
         ptavail_box = Listbox(ptleftframe, height=25, width=55, font=('calibri', 13, 'bold'))
@@ -959,8 +997,12 @@ class PatientPage(main):
         self.newone = newone
 
         global ptbookings_box
-        ptbookings_box = Listbox(ptrightframe, height=25, width=45, font=('calibri', 13, 'bold'))
+        ptbookings_box = Listbox(ptrightframe, height=25, width=55, font=('calibri', 13, 'bold'))
         ptbookings_box.grid(row=3, column=0)
+
+        deletebutton = Button(ptrightframe, text="Delete appointment", font=('calibri', 12), height=1, width=18, relief=RAISED,
+                              command=delete_appointment_pt)
+        deletebutton.grid(row=4, column=0, sticky=E)
 
         #fill_pt_bookings()
 
@@ -977,6 +1019,9 @@ class PatientPage(main):
         ptsearch_btn2 = Button(ptrightframe, text="Search", font=('calibri', 12), height=1, width=8, relief=RAISED,
                               command=self.search_usertwo)
         ptsearch_btn2.grid(row=2, column=0, sticky=E)
+
+        ptbookings_box.bind('<<ListboxSelect>>', selecter)
+
 
         # -------------------------------------------SOME FUNCTIONS------------------------------------------------------
 
@@ -1011,8 +1056,12 @@ class PatientPage(main):
             ptbookings_box.insert(END, i)
             print(i)
 
-
-
+    def quitframe4(self):
+        _ptexit = tkinter.messagebox.askyesno(title="Logout?", message="Do you wish to logout")
+        if _ptexit > 0:
+            frame4.destroy()
+        else:
+            pass
 
 
 root=Tk()

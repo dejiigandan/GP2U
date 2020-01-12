@@ -187,7 +187,15 @@ class GPPage:
         request_box = Listbox(middlebox, height=25, width=55)
         request_box.grid(row=0, column=0)
 
+        menubar = Menu(self.root)
+        self.root.config(menu=menubar)
+        mymenu = Menu(menubar, tearoff=0)
+        mymenu.add_command(label="New", command=self.donothing)
+        menubar.add_cascade(label="File", menu=mymenu)
 
+
+    def donothing(self):
+        self.root.destroy()
 
 root=Tk()
 a = GPPage(root)
