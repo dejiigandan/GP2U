@@ -14,7 +14,7 @@ def new_patient(title, nhs_number, Firstname, Surname, DOB, Gender, Address, Con
     conn = sqlite3.connect("ptdatabase.db")
     cursor = conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS patient_details(title TEXT, nhs_number INTEGER PRIMARY KEY, Firstname TEXT, Surname TEXT, DOB TEXT, \
-                    Gender TEXT, Address TEXT, Contact number TEXT, Allergies TEXT, Medical history TEXT, username TEXT, password VARCHAR)""")
+                    Gender TEXT, Address TEXT, Contact_number TEXT, Allergies TEXT, Medical_history TEXT, username TEXT, password VARCHAR)""")
     conn.commit()
     cursor.execute("""INSERT INTO patient_details VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                    (title, nhs_number, Firstname, Surname, DOB, Gender, Address, Contact_number, Allergies, Medical_history, username, password))
@@ -46,6 +46,8 @@ def confirm_pt_registration(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB
     conn.commit()
     conn.close()
 
+
+
 # def delete_patient(nhs_number):
 #     conn = sqlite3.connect("ptdatabase.db")
 #     cursor = conn.cursor()
@@ -65,6 +67,7 @@ def confirm_pt_registration(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB
 
 def update_patient_details(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress,
                             ptContact_number, ptAllergies, ptMedical_history, ptusername, ptpassword, another):
+    """Updates both tables"""
     conn = sqlite3.connect("ptdatabase.db")
     cursor = conn.cursor()
     cursor.execute(""" UPDATE confirmed_patients SET title=(?), nhs_number=(?), Firstname=(?), Surname=(?), DOB=(?), Gender=(?), Address=(?), Contact_number=(?),
@@ -74,6 +77,14 @@ def update_patient_details(pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB,
     conn.commit()
     conn.close()
 
+    conn = sqlite3.connect("ptdatabase.db")
+    cursor = conn.cursor()
+    cursor.execute(""" UPDATE patient_details SET title=(?), nhs_number=(?), Firstname=(?), Surname=(?), DOB=(?), Gender=(?), Address=(?), Contact_number=(?),
+                    Allergies=(?), Medical_history=(?), username=(?), password=(?) WHERE nhs_number=(?) """,
+                   (pttitle, ptnhs_number, ptFirstname, ptSurname, ptDOB, ptGender, ptAddress,
+                    ptContact_number, ptAllergies, ptMedical_history, ptusername, ptpassword, another))
+    conn.commit()
+    conn.close()
 
 def delete_a_gp(username):
     conn = sqlite3.connect("ptdatabase.db")

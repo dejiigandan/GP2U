@@ -27,8 +27,6 @@ class for_pt():
             if len(nhs_number.get()) != 0:
                 pt_db_connectivity.new_patient(title.get(), nhs_number.get(), Firstname.get(), Surname.get(),  Gender.get(),
                 Address.get(), Contact_number.get(), DOB.get(), Allergies.get(), Medical_history.get(), username.get().title(), password.get())
-                # pt_list.insert(END, (nhs_number.get(), Firstname.get(), Surname.get(), DOB.get(), Gender.get(),
-                # Address.get(), Contact_number.get(), Allergies.get(), Medical_history.get(), username.get(), password.get()))
             user_name = username.get()
             pass_word = password.get()
             file = open(f"{user_name}.txt", "w")
@@ -38,11 +36,6 @@ class for_pt():
             confirm_box = tkinter.messagebox.showinfo(message="Your details have been forwarded to our administration team who will confirm your registration")
             return confirm_box
             #TODO add message box to show message if selected NHS number is not unique
-
-        def show_pt():
-            pt_list.delete(0, END)
-            for i in pt_db_connectivity.pull_info():
-                st_list.insert(END, i, str(""))
 
 
         frame = Frame(self.root)
